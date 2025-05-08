@@ -1,7 +1,9 @@
 from typing import Optional, Type
 from datetime import datetime
 
-import socket
+import socket, logging
+
+logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
 
 class HTTPServer:
@@ -69,7 +71,7 @@ class HTTPRequestHandler:
         self.send_response(status_code)
 
     def log_request(self, format, *args) -> None:
-        print(
+        logging.info(
             f"{self.address_str()} - - [{datetime.now().strftime('%d/%b/%Y %H:%M:%S')}]] "
             f'"{self.method} {self.path} {self.http_version}" {format % args} -'
         )

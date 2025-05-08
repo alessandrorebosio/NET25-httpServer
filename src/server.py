@@ -17,19 +17,19 @@ class HTTPServer:
         self.RequestHandler = RequestHandler or HTTPRequestHandler
 
     def serve(self) -> None:
-        server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        server_socket.bind(self.server_address)
-        server_socket.listen(5)
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
+            server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            server_socket.bind(self.server_address)
+            server_socket.listen(5)
 
-        try:
-            while True:
-                conn, addr = server_socket.accept()
-                self.RequestHandler(conn).handle_request()
-        except KeyboardInterrupt:
-            return "server stopped"
-        finally:
-            server_socket.close()
+            try:
+                while True:
+                    conn, addr = server_socket.accept()
+                    self.RequestHandler(conn).handle_request()
+            except KeyboardInterrupt:
+                logging.info("server stopped manually")
+            finally:
+                server_socket.close()
 
 
 class HTTPRequestHandler:
@@ -55,17 +55,20 @@ class HTTPRequestHandler:
             request_line = self.client_socket.recv(1024).decode("utf-8").splitlines()[0]
             self.method, self.path, self.http_version, *_ = request_line.split()
         except (IndexError, ValueError, UnicodeDecodeError, AttributeError):
-            pass
+            raise ValueError("Malformed HTTP request")
 
     def send_response(
         self, status_code: int = 200, content: str = "", content_type: str = "text/html"
     ) -> None:
         response = (
-            f"HTTP/1.1 {status_code}\r\n"
+            f"{self.http_version} {status_code}\r\n"
             f"Content-Type: {content_type}\r\n"
-            f"Content-Length: {len(content)}\r\n\r\n"
-            f"{content}"
+            f"Content-Length: {len(content)}\r\n"
+            "\r\n"
         )
+        if self.method != "HEAD":
+            response += f"{content}\r\n"
+
         self.client_socket.sendall(response.encode("utf-8"))
         self.log_request("%s", status_code)
 
@@ -94,19 +97,21 @@ class HTTPRequestHandler:
     def do_GET(self):
         raise NotImplementedError("do_GET not implemented")
 
+    def do_HEAD(self):
+        self.do_GET()
+
 
 class MyServer(HTTPRequestHandler):
-    def do_GET(self) -> None:
-        response_content = f"""
-        <html>
-            <body>
-                <h1>Hello World</h1>
-                <p>Path: {self.get_path()}</p>
-                <p>Client IP: {self.address_str()}</p>
-            </body>
-        </html>
-        """
-        self.send_response(200, response_content)
+    def do_GET(self):
+        if self.path == "/":
+            self.path = "/index.html"
+
+        try:
+            with open("www" + self.path, "r", encoding="utf-8") as f:
+                content = f.read()
+            self.send_response(200, content, self.guess_mime_type(self.path))
+        except FileNotFoundError:
+            self.send_error(404, "<h1>404 Not Found</h1>")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 from typing import Optional, Type
 from datetime import datetime
 
-import socket, logging, mimetypes
+import socket, logging, mimetypes, threading
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
@@ -25,7 +25,9 @@ class HTTPServer:
             try:
                 while True:
                     conn, addr = server_socket.accept()
-                    self.RequestHandler(conn).handle_request()
+                    threading.Thread(
+                        target=self.RequestHandler(conn).handle_request, daemon=True
+                    ).start()
             except KeyboardInterrupt:
                 logging.info("server stopped manually")
             finally:

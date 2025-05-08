@@ -1,7 +1,7 @@
 from typing import Optional, Type
 from datetime import datetime
 
-import socket, logging
+import socket, logging, mimetypes
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
@@ -57,22 +57,28 @@ class HTTPRequestHandler:
         except (IndexError, ValueError, UnicodeDecodeError, AttributeError):
             pass
 
-    def send_response(self, status_code: int = 200, content: str = "") -> None:
+    def send_response(
+        self, status_code: int = 200, content: str = "", content_type: str = "text/html"
+    ) -> None:
         response = (
             f"HTTP/1.1 {status_code}\r\n"
-            f"Content-Type: text/html\r\n"
+            f"Content-Type: {content_type}\r\n"
             f"Content-Length: {len(content)}\r\n\r\n"
             f"{content}"
         )
         self.client_socket.sendall(response.encode("utf-8"))
         self.log_request("%s", status_code)
 
-    def send_error(self, status_code: int, message: str):
-        self.send_response(status_code)
+    def guess_mime_type(self, path: str) -> str:
+        mime_type, _ = mimetypes.guess_type(path)
+        return mime_type or "application/octet-stream"
+
+    def send_error(self, status_code: int, content: str):
+        self.send_response(status_code, content, self.guess_mime_type(self.path))
 
     def log_request(self, format, *args) -> None:
         logging.info(
-            f"{self.address_str()} - - [{datetime.now().strftime('%d/%b/%Y %H:%M:%S')}]] "
+            f"{self.address_str()} - - [{datetime.now().strftime('%d/%b/%Y %H:%M:%S')}] "
             f'"{self.method} {self.path} {self.http_version}" {format % args} -'
         )
 

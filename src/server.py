@@ -44,7 +44,7 @@ class HTTPRequestHandler:
             if hasattr(self, f"do_{self.method}"):
                 getattr(self, f"do_{self.method}")()
             else:
-                pass
+                self.send_error(501, f"Method {self.method} not implemented")
         finally:
             self.client_socket.close()
 
@@ -55,7 +55,7 @@ class HTTPRequestHandler:
         except (IndexError, ValueError, UnicodeDecodeError, AttributeError):
             pass
 
-    def send_response(self, content: str = "", status_code: int = 200) -> None:
+    def send_response(self, status_code: int = 200, content: str = "") -> None:
         response = (
             f"HTTP/1.1 {status_code}\r\n"
             f"Content-Type: text/html\r\n"
@@ -64,6 +64,9 @@ class HTTPRequestHandler:
         )
         self.client_socket.sendall(response.encode("utf-8"))
         self.log_request("%s", status_code)
+
+    def send_error(self, status_code: int, message: str):
+        self.send_response(status_code)
 
     def log_request(self, format, *args) -> None:
         print(

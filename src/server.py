@@ -98,7 +98,7 @@ class MyServer(HTTPRequestHandler):
             </body>
         </html>
         """
-        self.send_response(response_content)
+        self.send_response(200, response_content)
 
 
 if __name__ == "__main__":

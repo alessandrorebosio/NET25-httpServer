@@ -54,7 +54,7 @@ class HTTPRequestHandler:
 
     def parse_request(self) -> None:
         try:
-            request_line = self.client_socket.recv(1024).decode("utf-8").splitlines()[0]
+            request_line = self.client_socket.recv(1024).decode("utf-8").strip()
             self.method, self.path, self.http_version, *_ = request_line.split()
         except (IndexError, ValueError, UnicodeDecodeError, AttributeError):
             raise ValueError("Malformed HTTP request")
@@ -92,7 +92,7 @@ class HTTPRequestHandler:
 
     def address_str(self) -> str:
         try:
-            return self.client_socket.getpeername()[0]
+            return next(iter(self.client_socket.getpeername()))
         except OSError:
             return "0.0.0.0"
 

@@ -14,7 +14,7 @@ class Server(HTTPRequestHandler):
 
 
 hostname = "localhost"
-port = "8080"
+port = 8080
 
 if __name__ == "__main__":
     pass

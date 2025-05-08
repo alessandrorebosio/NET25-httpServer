@@ -1,8 +1,14 @@
+from datetime import datetime
+from typing import Optional, Type
 import socket
 
 
 class HTTPServer:
-    def __init__(self, server_address, RequestHandlerClass):
+    def __init__(
+        self,
+        server_address: tuple[str, int],
+        RequestHandlerClass: Type["HTTPRequestHandler"],
+    ):
         self.server_address = server_address
         self.RequestHandlerClass = RequestHandlerClass
         self.server_socket = None
@@ -31,42 +37,61 @@ class HTTPServer:
 
 
 class HTTPRequestHandler:
-    def __init__(self, client_socket):
+    def __init__(self, client_socket: socket.socket):
         self.client_socket = client_socket
-        self.www_dir = "www"
+        self.path: Optional[str] = None
 
     def handle_request(self):
-        request = self.client_socket.recv(1024).decode("utf-8")
-        method, path = self.parse_request(request)
+        try:
+            request = self.client_socket.recv(1024).decode("utf-8")
+            if not request:
+                return
 
-        if not request:
+            self.method, self.path = self.parse_request(request)
+
+            if self.method == "GET":
+                self.do_GET()
+            else:
+                self.send_response(501, "Method Not Implemented")
+        except (UnicodeDecodeError, ConnectionError) as e:
+            self.send_error(500, f"Internal Server Error: {e}")
+        finally:
             self.client_socket.close()
-            return
 
-        if method == "GET":
-            self.do_GET()
-        else:
-            self.send_response(501)
+    def parse_request(self, request: str) -> tuple[str, str]:
+        self.request = request.splitlines()[0] if request else ""
+        parts = self.request.split()
 
-        self.client_socket.close()
+        return (parts[0], parts[1]) if len(parts) >= 2 else ("", "")
 
-    def parse_request(self, request):
-        print(request)
-        return request, None
+    def send_response(self, code: int, message=None):
+        self.log_message(
+            '"%s" %s %s',
+            self.request,
+            str(code),
+            message if message is not None else "-",
+        )
 
-    def log(self):
-        pass
+    def log_message(self, format, *args):
+        timestamp = datetime.now().strftime("[%d/%b/%Y %H:%M:%S]")
+        print(f"{self.address_string()} - - {timestamp} {format % args} ")
 
-    def send_response(self):
-        pass
+    def get_path(self):
+        return self.path
+
+    def address_string(self):
+        try:
+            return self.client_socket.getpeername()[0]
+        except:
+            return "0.0.0.0"
 
     def do_GET(self):
-        raise
+        raise NotImplementedError("Method do_GET, not implemented")
 
 
 class MyServer(HTTPRequestHandler):
     def do_GET(self):
-        pass
+        self.send_response(200, "OK")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,8 @@
+body {
+    background: linear-gradient(to left, #43cea2, #185a9d);
+    color: #fff;
+}
+
+.centered {
+    min-height: 100vh;
+}

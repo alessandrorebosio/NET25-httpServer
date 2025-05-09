@@ -70,7 +70,7 @@ class HTTPRequestHandler:
         """Initialize the handler with a client socket connection."""
         self.client_socket = client_socket
         self.method = "GET"
-        self.path: Optional[str] = "/"
+        self.path: Optional[str] = "/www/index.html"
         self.http_version: str = "HTTP/1.1"
 
     def handle_request(self) -> None:
@@ -125,18 +125,17 @@ class HTTPRequestHandler:
                             <meta charset="UTF-8">
                             <meta name="viewport" content="width=device-width, initial-scale=1.0">
                             <title>Error {status_code} ({self.status_message(status_code)})</title>
-
-                            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
-                            integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
                             
-                            <link href="css/style.css" rel="stylesheet" type="text/css">
+                            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+                            
+                            <style>.full-height {{ height: 100vh; }}</style>
                         </head>
                         
                         <body>
                             <div class="container-fluid full-height d-flex justify-content-center align-items-center">
                                 <div class="text-center">
-                                    <h1>{status_code} - {self.status_message(status_code)}</h1>
-                                    <p><strong>Client IP:</strong> {self.address_str()}</p>
+                                    <h1 class="text-danger"><b>{status_code} - {self.status_message(status_code)}</b></h1>
+                                    <p class="text-muted"><strong>Client IP:</strong> {self.address_str()}</p>
                                     <p>The requested resource was {self.status_message(status_code).lower()} on this server.</p>
                                 </div>
                             </div>

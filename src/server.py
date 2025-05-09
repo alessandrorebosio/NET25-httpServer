@@ -74,6 +74,10 @@ class HTTPRequestHandler:
                 getattr(self, f"do_{self.method}")()
             else:
                 self.send_error(501)
+        except ValueError:
+            self.send_error(400)
+        except Exception:
+            self.send_error(500)
         finally:
             self.client_socket.close()
 

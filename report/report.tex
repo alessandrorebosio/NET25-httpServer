@@ -13,9 +13,7 @@
 \usepackage[italian]{cleveref}
 
 \title{Elaborato per il corso di\\''Programmazione di Reti''}
-\author{
-    Rebosio Alessandro
-}
+\author{Rebosio Alessandro}
 \date{\today}
 
 \begin{document}
@@ -25,6 +23,29 @@
 \tableofcontents
 
 \chapter{Introduzione}
+
+L'obiettivo di questo progetto è la realizzazione di un \textbf{server HTTP} \newline minimale sviluppato in \textbf{Python},
+capace di gestire richieste di tipo GET sulla porta 8080 di localhost e di servire contenuti statici
+in formato HTML e CSS.
+
+\vspace{0.5cm}
+
+Il progetto intende fornire una comprensione pratica del protocollo HTTP, dell'utilizzo dei \textbf{socket}
+per la comunicazione di rete e del funzionamento di base di un \textbf{web server}.
+
+\vspace{0.5cm}
+
+Attraverso la realizzazione di un server costruito manualmente, è stato possibile esplorare in modo diretto e
+applicato i concetti fondamentali delle reti e della programmazione di basso livello.
+
+\subsubsection{Funzionalità principali}
+\begin{itemize}
+    \item Risposta con codice di stato 200 per risorse esistenti;
+    \item Gestione dell'errore 404 per risorse non trovate;
+    \item Riconoscimento e gestione dei MIME types per i file serviti;
+    \item Logging delle richieste ricevute;
+    \item Pubblicazione di un sito web statico composto da tre pagine HTML responsive.
+\end{itemize}
 
 \chapter{Archittetura del progetto}
 
@@ -37,8 +58,5 @@
 \chapter{Conclusioni}
 
 \chapter{Appendice}
-
-% \bibliographystyle{alpha}
-% \bibliography{report}
 
 \end{document}

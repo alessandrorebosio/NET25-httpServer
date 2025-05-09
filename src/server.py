@@ -36,6 +36,23 @@ class HTTPServer:
 
 class HTTPRequestHandler:
 
+    HTTP_STATUS_MESSAGES = {
+        200: "OK",
+        201: "Created",
+        204: "No Content",
+        301: "Moved Permanently",
+        302: "Found",
+        400: "Bad Request",
+        401: "Unauthorized",
+        403: "Forbidden",
+        404: "Not Found",
+        405: "Method Not Allowed",
+        500: "Internal Server Error",
+        501: "Not Implemented",
+        502: "Bad Gateway",
+        503: "Service Unavailable",
+    }
+
     def __init__(self, client_socket: socket.socket):
         self.client_socket = client_socket
         self.method = "GET"
@@ -63,7 +80,7 @@ class HTTPRequestHandler:
         self, status_code: int = 200, content: str = "", content_type: str = "text/html"
     ) -> None:
         response = (
-            f"{self.http_version} {status_code}\r\n"
+            f"{self.http_version} {status_code} {self.status_message(status_code)}\r\n"
             f"Content-Type: {content_type}\r\n"
             f"Content-Length: {len(content)}\r\n"
             "\r\n"
@@ -74,18 +91,30 @@ class HTTPRequestHandler:
         self.client_socket.sendall(response.encode("utf-8"))
         self.log_request("%s", status_code)
 
-    def guess_mime_type(self, path: str) -> str:
-        mime_type, _ = mimetypes.guess_type(path)
-        return mime_type or "application/octet-stream"
+    def send_error(self, status_code: int):
+        with open("www/error.html") as f:
+            content = f.read()
 
-    def send_error(self, status_code: int, content: str):
-        self.send_response(status_code, content, self.guess_mime_type(self.path))
+            content = content.format(
+                status_code=status_code,
+                message=self.status_message(status_code),
+                client_ip=self.address_str(),
+            )
+
+            self.send_response(
+                status_code,
+                content,
+                self.guess_mime_type(self.path),
+            )
 
     def log_request(self, format, *args) -> None:
         logging.info(
             f"{self.address_str()} - - [{datetime.now().strftime('%d/%b/%Y %H:%M:%S')}] "
             f'"{self.method} {self.path} {self.http_version}" {format % args} -'
         )
+
+    def guess_mime_type(self, path: str) -> str:
+        return next(iter(mimetypes.guess_type(path))) or "text/html"
 
     def get_path(self) -> str:
         return self.path or "/"
@@ -96,6 +125,9 @@ class HTTPRequestHandler:
         except OSError:
             return "0.0.0.0"
 
+    def status_message(self, code: int) -> str:
+        return self.HTTP_STATUS_MESSAGES.get(code, "Unknown")
+
     def do_GET(self):
         raise NotImplementedError("do_GET not implemented")
 
@@ -105,15 +137,15 @@ class HTTPRequestHandler:
 
 class MyServer(HTTPRequestHandler):
     def do_GET(self):
-        if self.path == "/":
-            self.path = "/index.html"
-
         try:
-            with open("www" + self.path, "r", encoding="utf-8") as f:
+            if "error" in self.path:
+                return self.send_error(404)
+
+            with open(self.path.strip("/"), "r", encoding="utf-8") as f:
                 content = f.read()
             self.send_response(200, content, self.guess_mime_type(self.path))
-        except FileNotFoundError:
-            self.send_error(404, "<h1>404 Not Found</h1>")
+        except (FileNotFoundError, IsADirectoryError):
+            self.send_error(404)
 
 
 if __name__ == "__main__":

@@ -48,8 +48,30 @@ applicato i concetti fondamentali delle reti e della programmazione di basso liv
 \end{itemize}
 
 \chapter{Archittetura del progetto}
+L'architettura del progetto si basa su una suddivisione tra la logica applicativa del server e i
+contenuti statici da servire al client.
+
+\section{Descrizione dell'architettura}
+\begin{itemize}
+    \item \textbf{src/server.py}: implementa il web server HTTP, ascolta sulla porta 8080 e serve file
+          statici presenti nella cartella \texttt{www/}.
+    \item \textbf{www/}: contiene il sito web statico, costituito da tre pagine HTML e un file CSS
+          condiviso. Le pagine includono layout responsive e contenuti base.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{img/architettura.png}
+    \caption{Schema dell'architettura client-server}
+    \label{fig:architettura}
+\end{figure}
+
+In \Cref{fig:architettura} viene rappresenta l'interazione tra browser, server e file system. Quando un client
+invia una richiesta HTTP, il server interpreta la richiesta, individua il file richiesto nella directory \texttt{www/}
+e restituisce il contenuto.
 
 \chapter{Implementazione del web server}
+
 
 \chapter{Sito web statico}
 

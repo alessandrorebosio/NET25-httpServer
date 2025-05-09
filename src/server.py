@@ -172,11 +172,17 @@ class MyServer(HTTPRequestHandler):
             if "error" in self.path:
                 return self.send_error(404)
 
-            with open(self.path.strip("/"), "r", encoding="utf-8") as f:
+            safe_path = self.path.lstrip("/").replace("../", "").replace("..\\", "")
+
+            with open(safe_path, "r", encoding="utf-8") as f:
                 content = f.read()
             self.send_response(200, content)
         except (FileNotFoundError, IsADirectoryError):
             self.send_error(404)
+        except PermissionError:
+            self.send_error(403)
+        except Exception as e:
+            self.send_error(500)
 
 
 if __name__ == "__main__":

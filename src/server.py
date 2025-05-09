@@ -65,7 +65,7 @@ class HTTPRequestHandler:
             if hasattr(self, f"do_{self.method}"):
                 getattr(self, f"do_{self.method}")()
             else:
-                self.send_error(501, f"Method {self.method} not implemented")
+                self.send_error(501)
         finally:
             self.client_socket.close()
 

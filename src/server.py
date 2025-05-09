@@ -89,9 +89,7 @@ class HTTPRequestHandler:
         except (IndexError, ValueError, UnicodeDecodeError, AttributeError):
             raise ValueError("Malformed HTTP request")
 
-    def send_response(
-        self, status_code: int = 200, content: str = "", content_type: str = "text/html"
-    ) -> None:
+    def send_response(self, status_code: int = 200, content: str = "") -> None:
         """
         Send an HTTP response with the given status code and content.
 
@@ -102,7 +100,7 @@ class HTTPRequestHandler:
         """
         response = (
             f"{self.http_version} {status_code} {self.status_message(status_code)}\r\n"
-            f"Content-Type: {content_type}\r\n"
+            f"Content-Type: {self.guess_mime_type(self.path)}\r\n"
             f"Content-Length: {len(content)}\r\n"
             "\r\n"
         )
@@ -114,20 +112,22 @@ class HTTPRequestHandler:
 
     def send_error(self, status_code: int):
         """Send an error response with the given status code."""
-        with open("www/error.html") as f:
-            content = f.read()
+        try:
+            with open("www/error.html") as f:
+                content = f.read()
 
-            content = content.format(
-                status_code=status_code,
-                message=self.status_message(status_code),
-                client_ip=self.address_str(),
-            )
+                content = content.format(
+                    status_code=status_code,
+                    message=self.status_message(status_code),
+                    client_ip=self.address_str(),
+                )
 
-            self.send_response(
-                status_code,
-                content,
-                self.guess_mime_type(self.path),
+                self.send_response(status_code, content)
+        except FileNotFoundError:
+            content = (
+                f"<h1>Error {status_code}</h1><p>{self.status_message(status_code)}</p>"
             )
+            self.send_response(status_code, content)
 
     def log_request(self, format, *args) -> None:
         """Log the request in Apache Common Log Format."""
@@ -174,7 +174,7 @@ class MyServer(HTTPRequestHandler):
 
             with open(self.path.strip("/"), "r", encoding="utf-8") as f:
                 content = f.read()
-            self.send_response(200, content, self.guess_mime_type(self.path))
+            self.send_response(200, content)
         except (FileNotFoundError, IsADirectoryError):
             self.send_error(404)
 

@@ -1,3 +1,10 @@
+"""
+@author: Alessandro Rebosio
+@email: alessandro.rebosio@studio.unibo.it
+
+@studentID: 0001130557
+"""
+
 from typing import Optional, Type
 from datetime import datetime
 

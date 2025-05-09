@@ -119,22 +119,23 @@ class HTTPRequestHandler:
 
     def send_error(self, status_code: int):
         """Send an error response with the given status code."""
-        try:
-            with open("www/error.html") as f:
-                content = f.read()
-
-                content = content.format(
-                    status_code=status_code,
-                    message=self.status_message(status_code),
-                    client_ip=self.address_str(),
-                )
-
-                self.send_response(status_code, content)
-        except FileNotFoundError:
-            content = (
-                f"<h1>Error {status_code}</h1><p>{self.status_message(status_code)}</p>"
-            )
-            self.send_response(status_code, content)
+        content = f"""<!DOCTYPE html>
+                    <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            <title>Error {status_code} ({self.status_message(status_code)})</title>
+                        </head>
+                        
+                        <body>
+                            <h1>{status_code} - {self.status_message(status_code)}</h1>
+                            <div class="error-details">
+                                <p><strong>Client IP:</strong> {self.address_str()}</p>
+                            </div>
+                            <p>The requested resource was {self.status_message(status_code).lower()} on this server.</p>
+                        </body>
+                    </html>"""
+        self.send_response(status_code, content)
 
     def log_request(self, format, *args) -> None:
         """Log the request in Apache Common Log Format."""
@@ -176,9 +177,6 @@ class MyServer(HTTPRequestHandler):
 
     def do_GET(self):
         try:
-            if "error" in self.path:
-                return self.send_error(404)
-
             safe_path = self.path.lstrip("/").replace("../", "").replace("..\\", "")
 
             with open(safe_path, "r", encoding="utf-8") as f:

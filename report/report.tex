@@ -25,18 +25,13 @@
 \chapter{Introduzione}
 
 L'obiettivo di questo progetto è la realizzazione di un \textbf{server HTTP} \newline minimale sviluppato in \textbf{Python},
-capace di gestire richieste di tipo GET sulla porta 8080 di localhost e di servire contenuti statici
+capace di gestire richieste di tipo \texttt{GET} sulla \texttt{porta 8080} di localhost e di servire contenuti statici
 in formato HTML e CSS.
 
 \vspace{0.5cm}
 
-Il progetto intende fornire una comprensione pratica del protocollo HTTP, dell'utilizzo dei \textbf{socket}
-per la comunicazione di rete e del funzionamento di base di un \textbf{web server}.
-
-\vspace{0.5cm}
-
-Attraverso la realizzazione di un server costruito manualmente, è stato possibile esplorare in modo diretto e
-applicato i concetti fondamentali delle reti e della programmazione di basso livello.
+\noindent Il progetto intende fornire una comprensione pratica del \textbf{protocollo \newline HTTP}, dell'utilizzo dei \texttt{socket}
+per la comunicazione di rete e del funzionamento di base di un \texttt{web server}.
 
 \subsubsection{Funzionalità principali}
 \begin{itemize}
@@ -47,8 +42,9 @@ applicato i concetti fondamentali delle reti e della programmazione di basso liv
     \item Pubblicazione di un sito web statico composto da tre pagine HTML responsive.
 \end{itemize}
 
+
 \chapter{Archittetura del progetto}
-L'architettura del progetto si basa su una suddivisione tra la logica applicativa del server e i
+L'architettura del progetto si basa su una \texttt{suddivisione} tra la logica \newline applicativa del server e i
 contenuti statici da servire al client.
 
 \section{Descrizione dell'architettura}
@@ -70,6 +66,7 @@ In \Cref{fig:architettura} viene rappresenta l'interazione tra browser, server e
 invia una richiesta HTTP, il server interpreta la richiesta, individua il file richiesto nella directory \texttt{www/}
 e restituisce il contenuto.
 
+
 \chapter{Implementazione del web server}
 L'implementazione del server HTTP è interamente in \texttt{Python} utilizzando il modulo \texttt{socket} per
 la comunicazione e il modulo \texttt{threading} per la gestione concorrente delle connessioni.
@@ -88,7 +85,7 @@ la comunicazione e il modulo \texttt{threading} per la gestione concorrente dell
 Quando un client tenta la connessione e viene accettata, il server crea un nuovo \texttt{thread} per gestirla, permettendo
 le richieste in modo concorrente.
 
-La richiesta viene letta, vengono estratti il \texttt{metodo}, \texttt{path} e la versione \texttt{HTTP} dalla prima
+La richiesta viene letta, vengono estratti il \texttt{metodo}, \texttt{path} e la \texttt{versione HTTP} dalla prima
 riga.
 
 Successivamente se la risorsa richiesta esite nella directory \texttt{www/}, viene caricata e restituita la risposta
@@ -98,8 +95,13 @@ con il codice \texttt{(200, OK)}. Altrimenti viene restituita la risposta di err
 Il server usa la libreria \texttt{mimestype} per determinare il tipo di contenuto da servire in base all'estensione del
 file.
 
-Ogni \texttt{richiesta} viene loggata \Cref{fig:logging} in console con il formato: indirizzo IP del client, data e ora, metodo, risorsa richiesta
-e codice di stato restituito.
+\vspace{0.5cm}
+
+\noindent Ogni \texttt{richiesta} viene loggata \Cref{fig:logging} in console con il formato:
+
+\begin{verbatim}
+    ip  - - [data] "metodo risorsa versione" codice -
+\end{verbatim}
 
 \subsubsection{Esempi di logging:}
 \begin{figure}[H]
@@ -170,7 +172,7 @@ Content-Length: 872
 \begin{itemize}
     \item \url{http://localhost:8080/www/index.html}
 \end{itemize}
-La stessa risorsa è accessibile anche da un browser web digitando l’URL nella barra degli indirizzi, a condizione che il server sia attivo in locale sulla porta \texttt{8080}.
+La stessa risorsa è accessibile anche da un browser web digitando l'URL nella barra degli indirizzi, a condizione che il server sia attivo in locale sulla porta \texttt{8080}.
 
 \newpage
 \subsection{Risorse non trovate (404 Not Found)}
@@ -192,6 +194,30 @@ Content-Length: 1245
 La stessa richiesta, effettuata tramite browser, produce una pagina di errore ben formattata, confermando la corretta gestione dell'errore da parte del server.
 
 \subsection{Metodo non supportato (501 Not Implemented)}
+È stata testata la risposta del server a una richiesta POST verso la pagina di login:
+\begin{verbatim}
+curl -i -X POST http://localhost:8080/www/login.html
+\end{verbatim}
+
+\textbf{Risposta:}
+\begin{verbatim}
+HTTP/1.1 501 Not Implemented
+Content-Type: text/html
+Content-Length: 567
+\end{verbatim}
+
+\begin{itemize}
+    \item \url{http://localhost:8080/www/login.html}
+\end{itemize}
+Lo stesso comportamento può essere osservato tramite browser, quando si tenta di inviare il form di login.
+
+\vspace{0.5cm}
+
+\begin{quote}
+    \textit{Questo risultato è coerente con le specifiche del progetto, che prevedono l'implementazione solo del metodo GET per
+        la gestione di richieste HTTP.}
+\end{quote}
+
 \subsection{Test sui MIME types}
 Il server ha correttamente identificato il tipo di MIME dei file richiesti:
 \begin{itemize}
@@ -206,6 +232,26 @@ hanno migliorato l'usabilità e la compatibilità con i browser moderni. La stru
 
 
 \chapter{Conclusioni}
+Il progetto ha raggiunto tutti gli obiettivi prefissati, realizzando un web server HTTP minimale ma funzionale in Python. Attraverso questo sviluppo sono stati approfonditi diversi aspetti fondamentali:
+\begin{itemize}
+    \item Il funzionamento del protocollo HTTP/1.1
+    \item La gestione delle connessioni tramite socket
+    \item L'elaborazione delle richieste e la costruzione delle risposte
+    \item La gestione concorrente delle connessioni
+    \item La sicurezza di base nell'accesso alle risorse
+\end{itemize}
+
+Il server sviluppato, pur nella sua semplicità, dimostra di essere in grado di gestire correttamente le richieste GET per file statici, con appropriate risposte di errore per risorse non trovate o metodi non implementati. L'integrazione con un sito web reale, seppur minimale, ha permesso di verificare il corretto funzionamento in uno scenario pratico.
+
+\section{Sviluppi futuri}
+Possibili estensioni e miglioramenti includono:
+\begin{itemize}
+    \item Implementazione del metodo POST per form interattivi
+    \item Supporto per l'upload di file
+    \item Aggiunta di un sistema di caching
+    \item Implementazione di HTTPS per comunicazioni sicure
+    \item Supporto per CGI o interfacce con linguaggi server-side
+\end{itemize}
 
 
 \end{document}

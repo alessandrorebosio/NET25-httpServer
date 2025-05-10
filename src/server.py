@@ -96,7 +96,7 @@ class HTTPRequestHandler:
         except (IndexError, ValueError, UnicodeDecodeError, AttributeError):
             raise ValueError("Malformed HTTP request")
 
-    def send_response(self, status_code: int = 200, content: str = "") -> None:
+    def send_response(self, status_code: int = 200, content: bytes = "") -> None:
         """
         Send an HTTP response with the given status code and content.
 
@@ -105,16 +105,19 @@ class HTTPRequestHandler:
             content: Response body content
             content_type: MIME type of the content
         """
-        response = (
+        headers = (
             f"{self.http_version} {status_code} {self.status_message(status_code)}\r\n"
             f"Content-Type: {self.guess_mime_type(self.path)}\r\n"
             f"Content-Length: {len(content)}\r\n"
             "\r\n"
-        )
-        if self.method != "HEAD":
-            response += f"{content}\r\n"
+        ).encode("utf-8")
 
-        self.client_socket.sendall(response.encode("utf-8"))
+        self.client_socket.sendall(headers)
+        if self.method != "HEAD":
+            if isinstance(content, str):
+                content = content.encode("utf-8")
+        self.client_socket.sendall(content)
+
         self.log_request("%s", status_code)
 
     def send_error(self, status_code: int):
@@ -142,7 +145,7 @@ class HTTPRequestHandler:
                         </body>
                     </html>"""
 
-        self.send_response(status_code, content)
+        self.send_response(status_code, content.encode("utf-8"))
 
     def log_request(self, format, *args) -> None:
         """Log the request in Apache Common Log Format."""
@@ -153,7 +156,7 @@ class HTTPRequestHandler:
 
     def guess_mime_type(self, path: str) -> str:
         """Guess the MIME type based on the file extension."""
-        return next(iter(mimetypes.guess_type(path))) or "text/html"
+        return next(iter(mimetypes.guess_type(path))) or "application/octet-stream"
 
     def get_path(self) -> str:
         """Get the normalized request path."""
@@ -186,14 +189,14 @@ class MyServer(HTTPRequestHandler):
         try:
             safe_path = self.path.lstrip("/").replace("../", "").replace("..\\", "")
 
-            with open(safe_path, "r", encoding="utf-8") as f:
+            with open(safe_path, "rb") as f:
                 content = f.read()
             self.send_response(200, content)
         except (FileNotFoundError, IsADirectoryError):
             self.send_error(404)
         except PermissionError:
             self.send_error(403)
-        except Exception as e:
+        except Exception:
             self.send_error(500)
 
 

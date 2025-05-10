@@ -71,6 +71,55 @@ invia una richiesta HTTP, il server interpreta la richiesta, individua il file r
 e restituisce il contenuto.
 
 \chapter{Implementazione del web server}
+L'implementazione del server HTTP è interamente in \texttt{Python} utilizzando il modulo \texttt{socket} per
+la comunicazione e il modulo \texttt{threading} per la gestione concorrente delle connessioni.
+
+\section{Struttura generale}
+\begin{itemize}
+    \item \textbf{HTTPServer}: classe usata per stabilire una o più connessioni \newline attraverso la creazione di
+          un \texttt{socket}, che viene poi associato alla \texttt{porta 8080} per accettare le connessioni in ingresso.
+    \item \textbf{HTTRequestHandler}: classe per il parsing delle richieste con il successivo invio di risposte.
+    \item \textbf{MyServer}: sottoclasse per semplificare la logica, nella quale viene implementato il
+          metodo \texttt{do\_GET} per servire i file richiesti dai client.
+\end{itemize}
+
+\section{Gestione delle richieste}
+Quando un client tenta la connessione e viene accettata, il server crea un nuovo \texttt{thread} per gestirla, permettendo
+le richieste in modo concorrente.
+
+La richiesta viene letta, vengono estratti il \texttt{metodo}, \texttt{path} e la versione \texttt{HTTP} dalla prima
+riga.
+
+Successivamente se la risorsa richiesta esite nella directory \texttt{www/}, viene caricata e restituita la risposta
+con il codice \texttt{(200, OK)}. Altrimenti viene restituita la risposta di errore con il codice \texttt{(404, Not Found)}.
+
+\section{Gestione MIME types e logging}
+Il server usa la libreria \texttt{mimestype} per determinare il tipo di contenuto da servire in base all'estensione del
+file.
+
+Ogni \texttt{richiesta} viene loggata \Cref{fig:logging} in console con il formato: indirizzo IP del client, data e ora, metodo, risorsa richiesta
+e codice di stato restituito.
+
+\subsubsection{Esempi di logging:}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/logging.png}
+    \caption{Log delle richieste in console}
+    \label{fig:logging}
+\end{figure}
+
+\section{Sicurezza base}
+
+Per evitare accessi non autorizzati a file esterni alla cartella \texttt{www/}, il \newline path richiesto viene sanificato
+rimuovendo sequenze potenzialmente pericolose come \texttt{../}.
+
+\subsubsection{Sicurezza del path:}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\textwidth]{img/safe_path.png}
+    \caption{Codice per path sicura}
+    \label{fig:safe_path}
+\end{figure}
 
 
 \chapter{Sito web statico}

@@ -83,6 +83,7 @@ la comunicazione e il modulo \texttt{threading} per la gestione concorrente dell
           metodo \texttt{do\_GET} per servire i file richiesti dai client.
 \end{itemize}
 
+
 \section{Gestione delle richieste}
 Quando un client tenta la connessione e viene accettata, il server crea un nuovo \texttt{thread} per gestirla, permettendo
 le richieste in modo concorrente.
@@ -123,6 +124,29 @@ rimuovendo sequenze potenzialmente pericolose come \texttt{../}.
 
 
 \chapter{Sito web statico}
+Il sito web servito dal web server, al momento, è composto da tre pagine HTML statiche, con layout responsive e stile definito
+tramite file CSS dedicati. L'obiettivo è fornire un'interfaccia semplice per dimostrare il corretto caricamento dei contenuti
+da parte del server.
+
+\section{Pagine HTML}
+
+\begin{itemize}
+    \item \textbf{index.html} - Homepage che presenta una navigazione verso le altre sezioni del sito.
+    \item \textbf{login.html} — Simula una pagina di login: nel caso venga inviata una richiesta POST, il server restituirà un errore 501 (metodo non implementato).
+    \item \textbf{contact.html} — Pagina di contatto, con pulsanti per tornare alla home o alla pagina di login.
+\end{itemize}
+%
+\textit{Tutte le pagine fanno uso del framework \texttt{Bootstrap 5} per garantire un design responsive e compatibile con dispositivi di varie dimensioni.}
+
+\section{Estendibilità}
+
+Il sistema è progettato per essere facilmente estendibile: per aggiungere una nuova pagina è sufficiente \texttt{creare} un file HTML nella cartella
+\texttt{www/} e assicurarsi che il \texttt{collegamento} nel sito punti al percorso corretto.
+
+\begin{quote}
+    \textit{Non è necessario modificare il codice del web server: qualsiasi file esistente sarà automaticamente servito, a condizione che venga effettuata una richiesta HTTP valida.}
+\end{quote}
+
 
 \chapter{Test e risultati}
 

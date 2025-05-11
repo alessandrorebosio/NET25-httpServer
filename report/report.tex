@@ -253,5 +253,35 @@ Possibili estensioni e miglioramenti includono:
     \item Aggiunta di un sistema di caching
 \end{itemize}
 
+\appendix
+\chapter{Guida utente}
+\section{Clonazione del repository}
+Clonare il progetto da GitHub e accedere alla cartella:
+
+\begin{verbatim}
+> git clone https://github.com/nome-utente/network-project.git
+> cd network-project
+\end{verbatim}
+
+\section{Esecuzione del server}
+Il server può essere avviato eseguendo lo script principale:
+
+\begin{verbatim}
+> python3 src/server.py
+\end{verbatim}
+
+\noindent \textit{Il server sarà attivo su \texttt{http://localhost:8080}.}
+
+\section{Accesso alle pagine}
+Dal browser è possibile accedere alle pagine, presenti nella directory \texttt{www/}:
+
+\begin{itemize}
+    \item \url{http://localhost:8080/www/index.html}
+    \item \url{http://localhost:8080/www/login.html}
+    \item \url{http://localhost:8080/www/contact.html}
+\end{itemize}
+
+\noindent \textit{Se non presenti, verrà restituito l'errore \texttt{404 - Not Found}.}
+
 
 \end{document}

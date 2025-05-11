@@ -24,7 +24,7 @@
 
 \chapter{Introduzione}
 
-L'obiettivo di questo progetto è la realizzazione di un \textbf{server HTTP} \newline minimale sviluppato in \textbf{Python},
+L'obiettivo di questo progetto è la realizzazione di un \textbf{server HTTP} \newline sviluppato in \textbf{Python},
 capace di gestire richieste di tipo \texttt{GET} sulla \texttt{porta 8080} di localhost e di servire contenuti statici
 in formato HTML e CSS.
 
@@ -82,32 +82,31 @@ la comunicazione e il modulo \texttt{threading} per la gestione concorrente dell
 
 
 \section{Gestione delle richieste}
-Quando un client tenta la connessione e viene accettata, il server crea un nuovo \texttt{thread} per gestirla, permettendo
-le richieste in modo concorrente.
+Quando un client tenta di stabilire una connessione, il server la accetta e crea un nuovo \texttt{thread} dedicato alla sua gestione,
+consentendo l'elaborazione concorrente di più richieste.
 
-La richiesta viene letta, vengono estratti il \texttt{metodo}, \texttt{path} e la \texttt{versione HTTP} dalla prima
-riga.
+La richiesta viene quindi letta e, dalla prima riga, vengono estratti il \texttt{metodo}, il \texttt{percorso} (path) e la \texttt{versione HTTP}.
 
-Successivamente se la risorsa richiesta esite nella directory \texttt{www/}, viene caricata e restituita la risposta
-con il codice \texttt{(200, OK)}. Altrimenti viene restituita la risposta di errore con il codice \texttt{(404, Not Found)}.
+Successivamente, se la risorsa richiesta è presente nella directory \texttt{www/}, essa viene caricata e restituita al client
+con una risposta contenente il codice \texttt{(200 OK)}. In caso contrario, viene restituita una risposta di errore con
+codice.
+
 
 \section{Gestione MIME types e logging}
 Il server usa la libreria \texttt{mimestype} per determinare il tipo di contenuto da servire in base all'estensione del
 file.
 
-\vspace{0.5cm}
-
-\noindent Ogni \texttt{richiesta} viene loggata \Cref{fig:logging} in console con il formato:
+Ogni richiesta viene registrata in console \Cref{fig:logging} con il seguente formato:
 
 \begin{verbatim}
     ip  - - [data] "metodo risorsa versione" codice -
 \end{verbatim}
 
-\subsubsection{Esempi di logging:}
+\subsubsection{Esempio di log delle richieste}
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{img/logging.png}
-    \caption{Log delle richieste in console}
+    \caption{Esempio di log delle richieste stampate in console}
     \label{fig:logging}
 \end{figure}
 
@@ -159,7 +158,7 @@ richieste HTTP verso il server.
 Sono state effettuate richieste HTTP di tipo \texttt{GET} verso le pagine HTML presenti nella cartella \texttt{www/}.
 
 \begin{verbatim}
-curl -i http://localhost:8080/www/index.html
+> curl -I http://localhost:8080/www/index.html
 \end{verbatim}
 
 \textbf{Risposta:}
@@ -178,7 +177,7 @@ La stessa risorsa è accessibile anche da un browser web digitando l'URL nella b
 \subsection{Risorse non trovate (404 Not Found)}
 È stata verificata la gestione degli errori accedendo a una risorsa non presente nella cartella \texttt{www/}. Il server ha risposto correttamente con un errore \textbf{404 Not Found}.
 \begin{verbatim}
-curl -i http://localhost:8080/www/missing.html
+> curl -I http://localhost:8080/www/missing.html
 \end{verbatim}
 
 \textbf{Risposta:}
@@ -196,7 +195,7 @@ La stessa richiesta, effettuata tramite browser, produce una pagina di errore be
 \subsection{Metodo non supportato (501 Not Implemented)}
 È stata testata la risposta del server a una richiesta POST verso la pagina di login:
 \begin{verbatim}
-curl -i -X POST http://localhost:8080/www/login.html
+> curl -I -X POST http://localhost:8080/www/login.html
 \end{verbatim}
 
 \textbf{Risposta:}
@@ -232,7 +231,8 @@ hanno migliorato l'usabilità e la compatibilità con i browser moderni. La stru
 
 
 \chapter{Conclusioni}
-Il progetto ha raggiunto tutti gli obiettivi prefissati, realizzando un web server HTTP minimale ma funzionale in Python. Attraverso questo sviluppo sono stati approfonditi diversi aspetti fondamentali:
+Il progetto ha raggiunto tutti gli obiettivi prefissati, realizzando un web server HTTP con le funzionalità essenziali, utilizzando un
+linguaggio di programmazione ad alto livello come Python. Attraverso questo sviluppo sono stati approfonditi diversi aspetti fondamentali:
 \begin{itemize}
     \item Il funzionamento del protocollo HTTP/1.1
     \item La gestione delle connessioni tramite socket
@@ -241,7 +241,9 @@ Il progetto ha raggiunto tutti gli obiettivi prefissati, realizzando un web serv
     \item La sicurezza di base nell'accesso alle risorse
 \end{itemize}
 
-Il server sviluppato, pur nella sua semplicità, dimostra di essere in grado di gestire correttamente le richieste GET per file statici, con appropriate risposte di errore per risorse non trovate o metodi non implementati. L'integrazione con un sito web reale, seppur minimale, ha permesso di verificare il corretto funzionamento in uno scenario pratico.
+Il server sviluppato, pur nella sua semplicità, dimostra di essere in grado di gestire correttamente le richieste GET per file statici, con
+appropriate risposte di errore per risorse non trovate o metodi non implementati. L'integrazione con un sito web reale, seppur minimale, ha permesso di
+verificare il corretto funzionamento in uno scenario pratico.
 
 \section{Sviluppi futuri}
 Possibili estensioni e miglioramenti includono:
@@ -249,8 +251,6 @@ Possibili estensioni e miglioramenti includono:
     \item Implementazione del metodo POST per form interattivi
     \item Supporto per l'upload di file
     \item Aggiunta di un sistema di caching
-    \item Implementazione di HTTPS per comunicazioni sicure
-    \item Supporto per CGI o interfacce con linguaggi server-side
 \end{itemize}
 
 

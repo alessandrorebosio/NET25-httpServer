@@ -116,7 +116,7 @@ class HTTPRequestHandler:
         if self.method != "HEAD":
             if isinstance(content, str):
                 content = content.encode("utf-8")
-        self.client_socket.sendall(content)
+            self.client_socket.sendall(content)
 
         self.log_request("%s", status_code)
 
@@ -156,7 +156,7 @@ class HTTPRequestHandler:
 
     def guess_mime_type(self, path: str) -> str:
         """Guess the MIME type based on the file extension."""
-        return next(iter(mimetypes.guess_type(path))) or "application/octet-stream"
+        return next(iter(mimetypes.guess_type(path))) or "text/html"
 
     def get_path(self) -> str:
         """Get the normalized request path."""

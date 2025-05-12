@@ -168,10 +168,11 @@ Content-Type: text/html
 Content-Length: 872
 \end{verbatim}
 
+\subsubsection{Verifica Browser}
+La stessa risorsa è accessibile anche tramite browser web all'URL:
 \begin{itemize}
     \item \url{http://localhost:8080/www/index.html}
 \end{itemize}
-La stessa risorsa è accessibile anche da un browser web digitando l'URL nella barra degli indirizzi, a condizione che il server sia attivo in locale sulla porta \texttt{8080}.
 
 \newpage
 \subsection{Risorse non trovate (404 Not Found)}
@@ -187,15 +188,16 @@ Content-Type: text/html
 Content-Length: 1245
 \end{verbatim}
 
+\subsubsection{Verifica Browser}
+La stessa risorsa è accessibile anche tramite browser web all'URL:
 \begin{itemize}
-    \item \url{http://localhost:8080/www/missing.html}
+    \item \url{http://localhost:8080/}
 \end{itemize}
-La stessa richiesta, effettuata tramite browser, produce una pagina di errore ben formattata, confermando la corretta gestione dell'errore da parte del server.
 
 \subsection{Metodo non supportato (501 Not Implemented)}
-È stata testata la risposta del server a una richiesta POST verso la pagina di login:
+È stata testata la risposta del server a una richiesta POST:
 \begin{verbatim}
-> curl -I -X POST http://localhost:8080/www/login.html
+> curl -I -X POST http://localhost:8080/
 \end{verbatim}
 
 \textbf{Risposta:}
@@ -205,10 +207,11 @@ Content-Type: text/html
 Content-Length: 567
 \end{verbatim}
 
+\subsubsection{Verifica Browser}
+La stessa risorsa è accessibile anche tramite browser web all'URL, quando si tenta di inviare il form di login:
 \begin{itemize}
     \item \url{http://localhost:8080/www/login.html}
 \end{itemize}
-Lo stesso comportamento può essere osservato tramite browser, quando si tenta di inviare il form di login.
 
 \vspace{0.5cm}
 
@@ -217,13 +220,28 @@ Lo stesso comportamento può essere osservato tramite browser, quando si tenta d
         la gestione di richieste HTTP.}
 \end{quote}
 
-\subsection{Test sui MIME types}
-Il server ha correttamente identificato il tipo di MIME dei file richiesti:
+\subsection{Test sui MIME}
+È stato verificato il corretto riconoscimento dei tipi MIME da parte del server. I test hanno confermato che il server
+identifica accuratamente il tipo di contenuto e restituisce l'appropriato \texttt{Content-Type} nell'header della risposta.
+
+\begin{verbatim}
+    > curl -I http://localhost:8080/www/img/arc.png
+\end{verbatim}
+
+\noindent La risposta del server mostra il \texttt{corretto} tipo MIME per un'immagine PNG:
+\begin{verbatim}
+HTTP/1.1 200 OK
+Content-Type: image/png
+Content-Length: 1171993
+\end{verbatim}
+
+\subsubsection{Verifica Browser}
+La stessa risorsa è accessibile anche tramite browser web all'URL:
 \begin{itemize}
-    \item \texttt{.html} $\rightarrow$ \texttt{text/html}
-    \item \texttt{.css} $\rightarrow$ \texttt{text/css}
-    \item \texttt{.jpg}, \texttt{.png} $\rightarrow$ \texttt{image/jpeg}, \texttt{image/png}
+    \item \url{http://localhost:8080/www/img/arc.png}
 \end{itemize}
+con corretta visualizzazione dell'immagine.
+
 
 \subsection{Conclusioni dei test}
 Tutti i test funzionali hanno confermato la robustezza del server nell'ambito dei requisiti minimi. Le estensioni implementate (gestione MIME, logging)

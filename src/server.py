@@ -96,15 +96,8 @@ class HTTPRequestHandler:
         except (IndexError, ValueError, UnicodeDecodeError, AttributeError):
             raise ValueError("Malformed HTTP request")
 
-    def send_response(self, status_code: int = 200, content: bytes = "") -> None:
-        """
-        Send an HTTP response with the given status code and content.
-
-        Args:
-            status_code: HTTP status code
-            content: Response body content
-            content_type: MIME type of the content
-        """
+    def send_response(self, status_code: int = 200, content: bytes = b"", send_body: bool = True) -> None:
+        """Send an HTTP response with headers and optional content."""
         headers = (
             f"{self.http_version} {status_code} {self.status_message(status_code)}\r\n"
             f"Content-Type: {self.guess_mime_type(self.path)}\r\n"
@@ -113,9 +106,7 @@ class HTTPRequestHandler:
         ).encode("utf-8")
 
         self.client_socket.sendall(headers)
-        if self.method != "HEAD":
-            if isinstance(content, str):
-                content = content.encode("utf-8")
+        if send_body:
             self.client_socket.sendall(content)
 
         self.log_request("%s", status_code)
@@ -178,26 +169,33 @@ class HTTPRequestHandler:
         raise NotImplementedError("do_GET not implemented")
 
     def do_HEAD(self) -> None:
-        """Handle HEAD requests (same as GET but without body)."""
-        self.do_GET()
+        """Handle HEAD requests (same as GET but without body, to be implementend by subclasses)."""
+        raise NotImplementedError("do_HEAD not implemented")
 
 
 class MyServer(HTTPRequestHandler):
     """Custom HTTP request handler that serves files from the local filesystem."""
 
-    def do_GET(self):
+    def serve_file(self, send_body: bool = True):
         try:
-            safe_path = self.path.lstrip("/").replace("../", "").replace("..\\", "")
-
-            with open(safe_path, "rb") as f:
+            path = self.path.lstrip("/").replace("../", "").replace("..\\", "")
+            with open(path, "rb") as f:
                 content = f.read()
-            self.send_response(200, content)
-        except (FileNotFoundError, IsADirectoryError):
+            self.send_response(200, content, send_body=send_body)
+        except FileNotFoundError:
             self.send_error(404)
+        except IsADirectoryError:
+            self.send_error(403)
         except PermissionError:
             self.send_error(403)
         except Exception:
             self.send_error(500)
+
+    def do_GET(self):
+        self.serve_file(send_body=True)
+
+    def do_HEAD(self):
+        self.serve_file(send_body=False)
 
 
 if __name__ == "__main__":

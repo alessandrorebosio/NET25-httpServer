@@ -96,7 +96,9 @@ class HTTPRequestHandler:
         except (IndexError, ValueError, UnicodeDecodeError, AttributeError):
             raise ValueError("Malformed HTTP request")
 
-    def send_response(self, status_code: int = 200, content: bytes = b"", send_body: bool = True) -> None:
+    def send_response(
+        self, status_code: int = 200, content: bytes = b"", send_body: bool = True
+    ) -> None:
         """Send an HTTP response with headers and optional content."""
         headers = (
             f"{self.http_version} {status_code} {self.status_message(status_code)}\r\n"

@@ -35,11 +35,11 @@ per la comunicazione di rete e del funzionamento di base di un \texttt{web serve
 
 \subsubsection{Funzionalità principali}
 \begin{itemize}
-    \item Risposta con codice di stato 200 per risorse esistenti;
-    \item Gestione dell'errore 404 per risorse non trovate;
-    \item Riconoscimento e gestione dei MIME types per i file serviti;
-    \item Logging delle richieste ricevute;
-    \item Pubblicazione di un sito web statico composto da tre pagine HTML responsive.
+	\item Risposta con codice di stato 200 per risorse esistenti;
+	\item Gestione dell'errore 404 per risorse non trovate;
+	\item Riconoscimento e gestione dei MIME types per i file serviti;
+	\item Logging delle richieste ricevute;
+	\item Pubblicazione di un sito web statico composto da tre pagine HTML responsive.
 \end{itemize}
 
 
@@ -49,17 +49,17 @@ contenuti statici da servire al client.
 
 \section{Descrizione dell'architettura}
 \begin{itemize}
-    \item \textbf{src/server.py}: implementa il web server HTTP, ascolta sulla porta 8080 e serve file
-          statici presenti nella cartella \texttt{www/}.
-    \item \textbf{www/}: contiene il sito web statico, costituito da tre pagine HTML e un file CSS
-          condiviso. Le pagine includono layout responsive e contenuti base.
+	\item \textbf{src/server.py}: implementa il web server HTTP, ascolta sulla porta 8080 e serve file
+	      statici presenti nella cartella \texttt{www/}.
+	\item \textbf{www/}: contiene il sito web statico, costituito da tre pagine HTML e un file CSS
+	      condiviso. Le pagine includono layout responsive e contenuti base.
 \end{itemize}
 
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=0.5\textwidth]{img/architettura.png}
-    \caption{Schema dell'architettura client-server}
-    \label{fig:architettura}
+	\centering
+	\includegraphics[width=0.5\textwidth]{img/architettura.png}
+	\caption{Schema dell'architettura client-server}
+	\label{fig:architettura}
 \end{figure}
 
 In \Cref{fig:architettura} viene rappresenta l'interazione tra browser, server e file system. Quando un client
@@ -73,11 +73,11 @@ la comunicazione e il modulo \texttt{threading} per la gestione concorrente dell
 
 \section{Struttura generale}
 \begin{itemize}
-    \item \textbf{HTTPServer}: classe usata per stabilire una o più connessioni \newline attraverso la creazione di
-          un \texttt{socket}, che viene poi associato alla \texttt{porta 8080} per accettare le connessioni in ingresso.
-    \item \textbf{HTTPRequestHandler}: classe per il parsing delle richieste con il successivo invio di risposte.
-    \item \textbf{MyServer}: sottoclasse per semplificare la logica, nella quale viene implementato il
-          metodo \texttt{do\_GET} per servire i file richiesti dai client.
+	\item \textbf{HTTPServer}: classe usata per stabilire una o più connessioni \newline attraverso la creazione di
+	      un \texttt{socket}, che viene poi associato alla \texttt{porta 8080} per accettare le connessioni in ingresso.
+	\item \textbf{HTTPRequestHandler}: classe per il parsing delle richieste con il successivo invio di risposte.
+	\item \textbf{MyServer}: sottoclasse per semplificare la logica, nella quale viene implementato il
+	      metodo \texttt{do\_GET} per servire i file richiesti dai client.
 \end{itemize}
 
 
@@ -104,10 +104,10 @@ Ogni richiesta viene registrata in console \Cref{fig:logging} con il seguente fo
 
 \subsubsection{Esempio di log delle richieste}
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/logging.png}
-    \caption{Esempio di log delle richieste stampate in console}
-    \label{fig:logging}
+	\centering
+	\includegraphics[width=1\textwidth]{img/logging.png}
+	\caption{Esempio di log delle richieste stampate in console}
+	\label{fig:logging}
 \end{figure}
 
 \section{Sicurezza base}
@@ -117,10 +117,10 @@ rimuovendo sequenze potenzialmente pericolose come \texttt{../}.
 
 \subsubsection{Sicurezza del path:}
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=1\textwidth]{img/safe_path.png}
-    \caption{Codice per path sicura}
-    \label{fig:safe_path}
+	\centering
+	\includegraphics[width=1\textwidth]{img/safe_path.png}
+	\caption{Codice per path sicura}
+	\label{fig:safe_path}
 \end{figure}
 
 
@@ -132,9 +132,9 @@ da parte del server.
 \section{Pagine HTML}
 
 \begin{itemize}
-    \item \textbf{index.html} - Homepage che presenta una navigazione verso le altre sezioni del sito.
-    \item \textbf{login.html} — Simula una pagina di login: nel caso venga inviata una richiesta POST, il server restituirà un errore 501 (metodo non implementato).
-    \item \textbf{contact.html} — Pagina di contatto, con pulsanti per tornare alla home o alla pagina di login.
+	\item \textbf{index.html} - Homepage che presenta una navigazione verso le altre sezioni del sito.
+	\item \textbf{login.html} — Simula una pagina di login: nel caso venga inviata una richiesta POST, il server restituirà un errore 501 (metodo non implementato).
+	\item \textbf{contact.html} — Pagina di contatto, con pulsanti per tornare alla home o alla pagina di login.
 \end{itemize}
 %
 \textit{Tutte le pagine fanno uso del framework \texttt{Bootstrap 5} per garantire un design responsive e compatibile con dispositivi di varie dimensioni.}
@@ -145,7 +145,7 @@ Il sistema è progettato per essere facilmente estendibile: per aggiungere una n
 \texttt{www/} e assicurarsi che il \texttt{collegamento} nel sito punti al percorso corretto.
 
 \begin{quote}
-    \textit{Non è necessario modificare il codice del web server: qualsiasi file esistente sarà automaticamente servito, a condizione che venga effettuata una richiesta HTTP valida.}
+	\textit{Non è necessario modificare il codice del web server: qualsiasi file esistente sarà automaticamente servito, a condizione che venga effettuata una richiesta HTTP valida.}
 \end{quote}
 
 
@@ -171,7 +171,7 @@ Content-Length: 872
 \subsubsection{Verifica Browser}
 La stessa risorsa è accessibile anche tramite browser web all'URL:
 \begin{itemize}
-    \item \url{http://localhost:8080/www/index.html}
+	\item \url{http://localhost:8080/www/index.html}
 \end{itemize}
 
 \newpage
@@ -191,7 +191,7 @@ Content-Length: 1245
 \subsubsection{Verifica Browser}
 La stessa risorsa è accessibile anche tramite browser web all'URL:
 \begin{itemize}
-    \item \url{http://localhost:8080/}
+	\item \url{http://localhost:8080/}
 \end{itemize}
 
 \subsection{Metodo non supportato (501 Not Implemented)}
@@ -210,14 +210,14 @@ Content-Length: 1263
 \subsubsection{Verifica Browser}
 La stessa risorsa è accessibile anche tramite browser web all'URL, quando si tenta di inviare il form di login:
 \begin{itemize}
-    \item \url{http://localhost:8080/www/login.html}
+	\item \url{http://localhost:8080/www/login.html}
 \end{itemize}
 
 \vspace{0.5cm}
 
 \begin{quote}
-    \textit{Questo risultato è coerente con le specifiche del progetto, che prevedono l'implementazione solo del metodo GET per
-        la gestione di richieste HTTP.}
+	\textit{Questo risultato è coerente con le specifiche del progetto, che prevedono l'implementazione solo del metodo GET per
+		la gestione di richieste HTTP.}
 \end{quote}
 
 \subsection{Test sui MIME}
@@ -238,7 +238,7 @@ Content-Length: 1171993
 \subsubsection{Verifica Browser}
 La stessa risorsa è accessibile anche tramite browser web all'URL:
 \begin{itemize}
-    \item \url{http://localhost:8080/www/img/arc.png}
+	\item \url{http://localhost:8080/www/img/arc.png}
 \end{itemize}
 con corretta visualizzazione dell'immagine.
 
@@ -252,11 +252,11 @@ hanno migliorato l'usabilità e la compatibilità con i browser moderni. La stru
 Il progetto ha raggiunto tutti gli obiettivi prefissati, realizzando un web server HTTP con le funzionalità essenziali, utilizzando un
 linguaggio di programmazione ad alto livello come Python. Attraverso questo sviluppo sono stati approfonditi diversi aspetti fondamentali:
 \begin{itemize}
-    \item Il funzionamento del protocollo HTTP/1.1
-    \item La gestione delle connessioni tramite socket
-    \item L'elaborazione delle richieste e la costruzione delle risposte
-    \item La gestione concorrente delle connessioni
-    \item La sicurezza di base nell'accesso alle risorse
+	\item Il funzionamento del protocollo HTTP/1.1
+	\item La gestione delle connessioni tramite socket
+	\item L'elaborazione delle richieste e la costruzione delle risposte
+	\item La gestione concorrente delle connessioni
+	\item La sicurezza di base nell'accesso alle risorse
 \end{itemize}
 
 Il server sviluppato, pur nella sua semplicità, dimostra di essere in grado di gestire correttamente le richieste GET per file statici, con
@@ -266,9 +266,9 @@ verificare il corretto funzionamento in uno scenario pratico.
 \section{Sviluppi futuri}
 Possibili estensioni e miglioramenti includono:
 \begin{itemize}
-    \item Implementazione del metodo POST per form interattivi
-    \item Supporto per l'upload di file
-    \item Aggiunta di un sistema di caching
+	\item Implementazione del metodo POST per form interattivi
+	\item Supporto per l'upload di file
+	\item Aggiunta di un sistema di caching
 \end{itemize}
 
 \appendix
@@ -276,28 +276,33 @@ Possibili estensioni e miglioramenti includono:
 \section{Clonazione del repository}
 Clonare il progetto da GitHub e accedere alla cartella:
 
+{\footnotesize
 \begin{verbatim}
-> git clone https://github.com/nome-utente/network-project.git
+> git clone https://github.com/alessandrorebosio/network-project.git
 > cd network-project
 \end{verbatim}
+}
 
 \section{Esecuzione del server}
 Il server può essere avviato eseguendo lo script principale:
 
+{\footnotesize
 \begin{verbatim}
 > python src/server.py
 \end{verbatim}
-
+}
 \noindent \textit{Il server sarà attivo su \texttt{http://localhost:8080}.}
 
 \section{Accesso alle pagine}
 Dal browser è possibile accedere alle pagine, presenti nella directory \texttt{www/}:
 
+{\footnotesize
 \begin{itemize}
-    \item \url{http://localhost:8080/www/index.html}
-    \item \url{http://localhost:8080/www/login.html}
-    \item \url{http://localhost:8080/www/contact.html}
+	\item \url{http://localhost:8080/www/index.html}
+	\item \url{http://localhost:8080/www/login.html}
+	\item \url{http://localhost:8080/www/contact.html}
 \end{itemize}
+}
 
 \noindent \textit{Se non presenti, verrà restituito l'errore \texttt{404 - Not Found}.}
 

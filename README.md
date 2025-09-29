@@ -21,7 +21,7 @@ The server is capable of:
 ## How to Run the Server
 1. **Clone the Repository**
 ```bash
-git clone https://github.com/alessandrorebosio/network-project.git
+git clone https://github.com/alessandrorebosio/NET25-httpServer.git
 cd network-project
 ```
 
